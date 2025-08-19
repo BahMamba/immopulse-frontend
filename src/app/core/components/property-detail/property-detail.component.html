@@ -1,0 +1,94 @@
+<div class="p-2 sm:p-4 md:p-6 max-w-4xl mx-auto">
+  <h1 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800 tracking-tight">Détails de la propriété</h1>
+
+  <!-- Loading Skeleton -->
+  <div *ngIf="loading" class="bg-white rounded-lg shadow-md p-4 animate-pulse">
+    <div class="h-40 sm:h-48 bg-gray-200 rounded-lg mb-4"></div>
+    <div class="space-y-3">
+      <div class="h-5 bg-gray-200 rounded w-3/4"></div>
+      <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+      <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md mb-4 animate-fade-in">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Property Details -->
+  <div *ngIf="propertyDetail && !loading && !errorMessage" class="bg-white rounded-lg shadow-md p-4 sm:p-5 transition-all duration-300 hover:shadow-lg">
+    <!-- Swiper Web Component -->
+    <div class="mb-4 relative">
+      <swiper-container
+        *ngIf="hasImages"
+        slides-per-view="1"
+        space-between="8"
+        navigation="true"
+        pagination="true"
+        loop="true"
+        class="rounded-lg overflow-hidden"
+      >
+        <swiper-slide *ngFor="let image of propertyDetail.images; let i = index">
+          <img 
+            [src]="'http://localhost:8080' + image" 
+            [alt]="propertyDetail.title + ' image ' + (i + 1)"
+            class="w-full h-40 sm:h-48 md:h-60 object-cover transition-transform duration-300 hover:scale-105"
+            loading="lazy"
+          />
+        </swiper-slide>
+      </swiper-container>
+      <img 
+        *ngIf="!hasImages && propertyDetail.coverImageUrl"
+        [src]="'http://localhost:8080' + propertyDetail.coverImageUrl"
+        [alt]="propertyDetail.title"
+        class="w-full h-40 sm:h-48 md:h-60 object-cover rounded-lg"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Property Info -->
+    <div class="space-y-3">
+      <h2 class="text-lg sm:text-xl font-bold text-gray-800">{{ propertyDetail.title }}</h2>
+      <p class="text-gray-600 text-sm">{{ propertyDetail.address }}</p>
+      <p class="text-indigo-700 font-semibold text-base sm:text-lg">{{ propertyDetail.price | currency:'EUR' }}</p>
+      <p class="text-gray-600 text-sm whitespace-pre-line">{{ propertyDetail.description }}</p>
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-sm font-medium text-gray-600">Type: {{ propertyDetail.type }}</span>
+        <span 
+          class="px-2 py-1 rounded-full text-xs font-medium text-white transition-colors duration-300"
+          [ngClass]="{
+            'bg-green-600': propertyDetail.status === 'DISPONIBLE',
+            'bg-yellow-500': propertyDetail.status === 'ATTENTE',
+            'bg-indigo-700': propertyDetail.status === 'VENTE' || propertyDetail.status === 'LOUER'
+          }"
+        >
+          {{ getStatusLabel(propertyDetail.status) }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Owner Info -->
+    <div class="mt-4 border-t pt-3">
+      <h3 class="text-base font-semibold text-gray-800">Propriétaire</h3>
+      <p class="text-gray-600 text-sm">Nom: {{ propertyDetail.ownerFullname ?? 'Non spécifié' }}</p>
+      <p class="text-gray-600 text-sm">
+        Email: 
+        <a 
+          [href]="'mailto:' + propertyDetail.ownerEmail" 
+          class="text-indigo-700 hover:underline transition-colors duration-300"
+        >
+          {{ propertyDetail.ownerEmail ?? 'Non spécifié' }}
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <div class="mt-4">
+    <a [routerLink]="['/admin/properties']" class="text-indigo-700 group relative text-sm font-medium hover:text-indigo-900 transition-colors duration-300">
+      ← Retour à la liste
+      <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-indigo-700 transition-all duration-300 group-hover:w-full"></span>
+    </a>
+  </div>
+</div>

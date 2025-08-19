@@ -1,0 +1,55 @@
+<div class="flex h-screen bg-gray-50 relative">
+
+  <!-- Sidebar desktop -->
+  <aside
+    class="w-64 bg-gradient-to-b from-gray-800 to-teal-700 text-white p-4 space-y-3 shadow-lg hidden md:block"
+  >
+    <div class="text-2xl font-bold mb-6">🏢 ImmoPulse</div>
+    <nav class="space-y-2">
+      <a routerLink="#" class="block px-3 py-2 rounded hover:bg-teal-600">📊 Dashboard</a>
+      <a routerLink="#" class="block px-3 py-2 rounded hover:bg-teal-600">🏠 Mes Biens</a>
+      <a routerLink="#" class="block px-3 py-2 rounded hover:bg-teal-600">👥 Mes Clients</a>
+    </nav>
+  </aside>
+
+  <!-- Sidebar mobile (slide over) -->
+  <div
+    class="fixed inset-0 z-50 md:hidden bg-gradient-to-b from-gray-800 to-teal-700 text-white transform transition-transform duration-300 w-64 shadow-lg"
+    [class.-translate-x-full]="!sidebarOpen"
+  >
+    <div class="flex items-center justify-between p-4 border-b border-teal-400">
+      <span class="text-xl font-bold">🏢 ImmoPulse</span>
+      <button class="text-white text-xl" (click)="sidebarOpen = false">✕</button>
+    </div>
+    <nav class="p-4 space-y-2">
+      <a routerLink="#" class="block px-3 py-2 rounded hover:bg-teal-600">📊 Dashboard</a>
+      <a routerLink="#" class="block px-3 py-2 rounded hover:bg-teal-600">🏠 Mes Biens</a>
+      <a routerLink="#" class="block px-3 py-2 rounded hover:bg-teal-600">👥 Mes Clients</a>
+    </nav>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex-1 flex flex-col h-full">
+
+    <!-- Topbar -->
+    <header class="bg-white shadow px-4 py-3 flex items-center justify-between md:justify-between">
+      <!-- Burger for mobile -->
+      <button class="md:hidden text-2xl text-teal-700" (click)="sidebarOpen = true">☰</button>
+
+      <!-- Title centered on mobile -->
+      <div class="flex-1 text-center md:text-left text-teal-700 text-lg font-semibold">
+        Bienvenue, {{ userName }}
+      </div>
+
+      <!-- Message desktop only -->
+      <div class="hidden sm:block text-sm text-gray-500">
+        Immopulse avec nous vous rêvez mieux
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="flex-1 p-4 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
