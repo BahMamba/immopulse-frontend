@@ -11,10 +11,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./core/layouts-component/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     children: [
+      { path: 'properties-owner', loadComponent: () => import('./core/components/property-by-owner/property-by-owner.component').then(m => m.PropertyByOwnerComponent)},
       { path: 'properties', loadComponent: () => import('./core/components/property-list/property-list.component').then(m => m.PropertyListComponent)},
       { path: 'add-property', loadComponent: () => import('./core/components/property-form/property-form.component').then(m => m.PropertyFormComponent)},
       { path: 'edit-property/:id', loadComponent: () => import('./core/components/property-form/property-form.component').then(m => m.PropertyFormComponent)},
-      { path : 'detail-property/:id', loadComponent: () => import('./core/components/property-detail/property-detail.component').then(m=>m.PropertyDetailComponent)}
+      { path: 'detail-property/:id', loadComponent: () => import('./core/components/property-detail/property-detail.component').then(m=>m.PropertyDetailComponent)}
     ],
   },
   {

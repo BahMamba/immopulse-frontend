@@ -1,28 +1,26 @@
-// src/app/components/property-list/property-list.component.ts
+// src/app/components/property-by-owner/property-by-owner.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { debounceTime, Subject } from 'rxjs';
 import { PaginatedProperties, PropertyListItem } from '../../property.models';
 import { PropertyService } from '../../service/property/property.service';
 import { NotificationService } from 'app/core/service/alert-service/notification.service';
 
 @Component({
-  selector: 'app-property-list',
+  selector: 'app-property-by-owner',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './property-list.component.html'
+  imports: [CommonModule, RouterModule, FormsModule],
+  templateUrl: './property-by-owner.component.html'
 })
-export class PropertyListComponent implements OnInit {
+export class PropertyByOwnerComponent implements OnInit {
   properties: PropertyListItem[] = [];
-  totalPages: number = 0;
-  currentPage: number = 0;
-  pageSize: number = 6;
+  currentPage = 0;
+  pageSize = 6;
+  totalPages = 0;
   isLoading = false;
   titleFilter = '';
   statusFilter = '';
-  private searchSubject = new Subject<string>();
 
   constructor(
     private service: PropertyService,
@@ -30,36 +28,18 @@ export class PropertyListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.setupSearchDebounce();
-    this.loadProperties();
-  }
-
-  setupSearchDebounce(): void {
-    this.searchSubject.pipe(debounceTime(300)).subscribe(searchTerm => {
-      this.titleFilter = searchTerm;
-      this.currentPage = 0;
-      this.loadProperties();
-    });
-  }
-
-  onSearchChange(searchTerm: string): void {
-    this.searchSubject.next(searchTerm);
-  }
-
-  onStatusChange(): void {
-    this.currentPage = 0;
     this.loadProperties();
   }
 
   loadProperties(): void {
     this.isLoading = true;
-    this.service.getProperties(this.currentPage, this.pageSize, this.titleFilter, this.statusFilter).subscribe({
+    this.service.getPropertiesByOwner(this.currentPage, this.pageSize, this.titleFilter, this.statusFilter).subscribe({
       next: (data: PaginatedProperties<PropertyListItem>) => {
         this.properties = data.content;
         this.totalPages = data.totalPages;
         this.isLoading = false;
         if (this.properties.length === 0 && this.currentPage === 0) {
-          this.notificationService.showError('Aucune propriété trouvée pour ces critères.');
+          this.notificationService.showSuccess('Aucune propriété pour le moment. Ajoutez-en une !');
         }
       },
       error: (err) => {
@@ -74,5 +54,23 @@ export class PropertyListComponent implements OnInit {
       this.currentPage = page;
       this.loadProperties();
     }
+  }
+
+  deleteProperty(id: number): void {
+    this.notificationService.showConfirmation(
+      'Confirmer la suppression',
+      'Voulez-vous vraiment supprimer cette propriété ?',
+      () => {
+        this.service.deleteProperty(id).subscribe({
+          next: () => {
+            this.notificationService.showSuccess('Propriété supprimée avec succès !');
+            this.loadProperties();
+          },
+          error: (err) => {
+            this.notificationService.showError(err.message);
+          }
+        });
+      }
+    );
   }
 }

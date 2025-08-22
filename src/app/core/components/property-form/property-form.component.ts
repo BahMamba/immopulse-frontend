@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PropertyService } from '../../service/property/property.service';
+import { NotificationService } from 'app/core/service/alert-service/notification.service';
 
 @Component({
   selector: 'app-property-form',
@@ -15,7 +16,6 @@ export class PropertyFormComponent implements OnInit {
   coverImagePreview: string | null = null;
   additionalImagesPreview: string[] = [];
   isSubmitting = false;
-  errorMessage = '';
   isEditMode = false;
   propertyId: number | null = null;
 
@@ -23,7 +23,8 @@ export class PropertyFormComponent implements OnInit {
     private fb: FormBuilder,
     private propertyService: PropertyService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private notificationService: NotificationService
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -53,37 +54,44 @@ export class PropertyFormComponent implements OnInit {
               type: property.type,
               status: property.status
             });
-            this.coverImagePreview = property.coverImageUrl || null;
-            this.additionalImagesPreview = property.images || [];
+            this.coverImagePreview = property.coverImageUrl ? `http://localhost:8080${property.coverImageUrl}` : null;
+            this.additionalImagesPreview = property.images?.map(img => `http://localhost:8080${img}`) || [];
           },
-          error: () => (this.errorMessage = 'Erreur lors du chargement')
+          error: (err) => {
+            this.notificationService.showError('Erreur lors du chargement de la propriété.');
+          }
         });
       }
     });
   }
 
-  // ajout de l'image de couverture
   onCoverImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.[0]) {
       const file = input.files[0];
+      if (!file.type.startsWith('image/')) {
+        this.notificationService.showError('Veuillez sélectionner une image valide.');
+        return;
+      }
       this.form.patchValue({ coverImage: file });
       const reader = new FileReader();
-      reader.onload = () => setTimeout(() => (this.coverImagePreview = reader.result as string), 0);
+      reader.onload = () => (this.coverImagePreview = reader.result as string);
       reader.readAsDataURL(file);
     }
   }
 
-  // ajout de plusieurs images
   onAdditionalImagesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files) {
-      const files = Array.from(input.files);
+      const files = Array.from(input.files).filter(file => file.type.startsWith('image/'));
+      if (files.length !== input.files.length) {
+        this.notificationService.showError('Certaines fichiers ne sont pas des images valides.');
+      }
       this.form.patchValue({ images: files });
       this.additionalImagesPreview = [];
       files.forEach(file => {
         const reader = new FileReader();
-        reader.onload = () => setTimeout(() => this.additionalImagesPreview.push(reader.result as string), 0);
+        reader.onload = () => this.additionalImagesPreview.push(reader.result as string);
         reader.readAsDataURL(file);
       });
     }
@@ -92,6 +100,7 @@ export class PropertyFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.notificationService.showError('Veuillez remplir tous les champs requis.');
       return;
     }
 
@@ -104,13 +113,32 @@ export class PropertyFormComponent implements OnInit {
     request.subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.router.navigate(['/admin/properties']);
+        this.notificationService.showSuccess(
+          this.isEditMode ? 'Propriété mise à jour avec succès !' : 'Propriété créée avec succès !'
+        );
+        this.form.reset({
+          title: '',
+          description: '',
+          address: '',
+          price: 0,
+          type: 'VILLA',
+          status: 'VENTE',
+          coverImage: null,
+          images: null
+        });
+        this.coverImagePreview = null;
+        this.additionalImagesPreview = [];
+        this.router.navigate(['/admin/properties-owner']);
       },
       error: (err) => {
-        this.errorMessage = err.message || 'Erreur lors de la soumission';
         this.isSubmitting = false;
+        this.notificationService.showError(err.message || 'Erreur lors de la soumission.');
       }
     });
+  }
+
+  cancel(): void {
+    this.router.navigate(['/admin/properties-owner']);
   }
 
   private buildFormData(): FormData {
@@ -125,7 +153,9 @@ export class PropertyFormComponent implements OnInit {
     };
     formData.append('property', new Blob([JSON.stringify(propertyDto)], { type: 'application/json' }));
     const coverImage = this.form.get('coverImage')?.value;
-    if (coverImage instanceof File) formData.append('coverImage', coverImage);
+    if (coverImage instanceof File) {
+      formData.append('coverImage', coverImage);
+    }
     const images = this.form.get('images')?.value || [];
     images.forEach((file: File) => formData.append('images', file));
     return formData;

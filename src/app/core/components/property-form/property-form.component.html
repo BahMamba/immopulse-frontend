@@ -1,63 +1,138 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6 max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
-  <div class="flex flex-col">
-    <label class="font-semibold text-gray-700">Titre</label>
-    <input formControlName="title" class="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-    <span *ngIf="form.get('title')?.touched && form.get('title')?.invalid" class="text-red-500 text-sm mt-1">
-      Titre requis (3 caractères min).
-    </span>
-  </div>
-  <div class="flex flex-col">
-    <label class="font-semibold text-gray-700">Description</label>
-    <textarea formControlName="description" class="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
-    <span *ngIf="form.get('description')?.touched && form.get('description')?.invalid" class="text-red-500 text-sm mt-1">
-      Description requise (10 caractères min).
-    </span>
-  </div>
-  <div class="flex flex-col">
-    <label class="font-semibold text-gray-700">Adresse</label>
-    <input formControlName="address" class="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-    <span *ngIf="form.get('address')?.touched && form.get('address')?.invalid" class="text-red-500 text-sm mt-1">
-      Adresse requise.
-    </span>
-  </div>
-  <div class="flex flex-col">
-    <label class="font-semibold text-gray-700">Prix</label>
-    <input type="number" formControlName="price" class="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-    <span *ngIf="form.get('price')?.touched && form.get('price')?.invalid" class="text-red-500 text-sm mt-1">
-      Prix requis (≥ 0).
-    </span>
-  </div>
-  <div class="flex flex-col">
-    <label class="font-semibold text-gray-700">Type</label>
-    <select formControlName="type" class="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-      <option value="VILLA">Villa</option>
-      <option value="APPARTEMENT">Appartement</option>
-      <option value="COMMERCE">Commerce</option>
-      <option value="TERRAIN">Terrain</option>
-    </select>
-  </div>
-  <div class="flex flex-col">
-    <label class="font-semibold text-gray-700">Statut</label>
-    <select formControlName="status" class="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-      <option value="VENTE">Vente</option>
-      <option value="DISPONIBLE">Disponible</option>
-      <option value="LOUER">Louer</option>
-    </select>
-  </div>
-  <div class="flex flex-col">
-    <label class="font-semibold text-gray-700">Image de couverture</label>
-    <input type="file" (change)="onCoverImageSelected($event)" accept="image/*" class="border p-3 rounded-lg">
-    <img *ngIf="coverImagePreview" [src]="coverImagePreview" class="w-32 mt-3 rounded-lg">
-  </div>
-  <div class="flex flex-col">
-    <label class="font-semibold text-gray-700">Images supplémentaires</label>
-    <input type="file" multiple (change)="onAdditionalImagesSelected($event)" accept="image/*" class="border p-3 rounded-lg">
-    <div class="flex flex-wrap gap-3 mt-3">
-      <img *ngFor="let img of additionalImagesPreview" [src]="img" class="w-32 rounded-lg">
+<div class="max-w-3xl mx-auto p-6">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">
+    {{ isEditMode ? 'Modifier la propriété' : 'Ajouter une propriété' }}
+  </h1>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bg-white p-6 rounded-lg shadow-md space-y-6">
+    <!-- Titre -->
+    <div class="space-y-2">
+      <label for="title" class="block text-sm font-medium text-gray-700">Titre</label>
+      <input 
+        id="title"
+        formControlName="title" 
+        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        placeholder="Ex. Maison moderne avec jardin"
+      >
+      <p *ngIf="form.get('title')?.touched && form.get('title')?.invalid" 
+         class="text-red-500 text-xs">Titre requis (3 caractères minimum).</p>
     </div>
-  </div>
-  <button type="submit" [disabled]="isSubmitting" class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition">
-    {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
-  </button>
-  <span *ngIf="errorMessage" class="text-red-500 text-sm text-center">{{ errorMessage }}</span>
-</form>
+
+    <!-- Description -->
+    <div class="space-y-2">
+      <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+      <textarea 
+        id="description"
+        formControlName="description" 
+        rows="4"
+        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y transition"
+        placeholder="Décrivez la propriété..."
+      ></textarea>
+      <p *ngIf="form.get('description')?.touched && form.get('description')?.invalid" 
+         class="text-red-500 text-xs">Description requise (10 caractères minimum).</p>
+    </div>
+
+    <!-- Adresse -->
+    <div class="space-y-2">
+      <label for="address" class="block text-sm font-medium text-gray-700">Adresse</label>
+      <input 
+        id="address"
+        formControlName="address" 
+        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        placeholder="Ex. 123 Rue Exemple, Paris"
+      >
+      <p *ngIf="form.get('address')?.touched && form.get('address')?.invalid" 
+         class="text-red-500 text-xs">Adresse requise.</p>
+    </div>
+
+    <!-- Prix et Type -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <label for="price" class="block text-sm font-medium text-gray-700">Prix (€)</label>
+        <input 
+          id="price"
+          type="number" 
+          formControlName="price" 
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          placeholder="Ex. 250000"
+        >
+        <p *ngIf="form.get('price')?.touched && form.get('price')?.invalid" 
+           class="text-red-500 text-xs">Prix requis (≥ 0).</p>
+      </div>
+      <div class="space-y-2">
+        <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
+        <select 
+          id="type"
+          formControlName="type" 
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        >
+          <option value="VILLA">Villa</option>
+          <option value="APPARTEMENT">Appartement</option>
+          <option value="COMMERCE">Commerce</option>
+          <option value="TERRAIN">Terrain</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Statut -->
+    <div class="space-y-2">
+      <label for="status" class="block text-sm font-medium text-gray-700">Statut</label>
+      <select 
+        id="status"
+        formControlName="status" 
+        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+      >
+        <option value="VENTE">Vente</option>
+        <option value="DISPONIBLE">Disponible</option>
+        <option value="LOUER">Louer</option>
+      </select>
+    </div>
+
+    <!-- Image de couverture -->
+    <div class="space-y-2">
+      <label for="coverImage" class="block text-sm font-medium text-gray-700">Image de couverture</label>
+      <input 
+        id="coverImage"
+        type="file" 
+        (change)="onCoverImageSelected($event)" 
+        accept="image/*" 
+        class="w-full p-3 border rounded-lg file:bg-blue-50 file:border-0 file:p-2 file:rounded file:text-sm"
+      >
+      <div *ngIf="coverImagePreview" class="mt-2">
+        <img [src]="coverImagePreview" class="w-32 h-32 object-cover rounded-lg shadow-sm" alt="Cover Preview">
+      </div>
+    </div>
+
+    <!-- Images supplémentaires -->
+    <div class="space-y-2">
+      <label for="images" class="block text-sm font-medium text-gray-700">Images supplémentaires</label>
+      <input 
+        id="images"
+        type="file" 
+        multiple 
+        (change)="onAdditionalImagesSelected($event)" 
+        accept="image/*" 
+        class="w-full p-3 border rounded-lg file:bg-blue-50 file:border-0 file:p-2 file:rounded file:text-sm"
+      >
+      <div *ngIf="additionalImagesPreview.length" class="flex flex-wrap gap-2 mt-2">
+        <img *ngFor="let img of additionalImagesPreview" [src]="img" class="w-20 h-20 object-cover rounded-lg shadow-sm">
+      </div>
+    </div>
+
+    <!-- Boutons -->
+    <div class="flex gap-4">
+      <button 
+        type="submit" 
+        [disabled]="isSubmitting" 
+        class="flex-1 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition"
+      >
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+      <button 
+        type="button" 
+        (click)="cancel()" 
+        class="flex-1 bg-gray-300 p-3 rounded-lg hover:bg-gray-400 transition"
+      >
+        Annuler
+      </button>
+    </div>
+  </form>
+</div>
