@@ -63,7 +63,7 @@ export class AuthService {
     const routeMap: Record<string, string> = {
       ADMIN: '/admin',
       OWNER: '/agent',
-      CLIENT: '/client'
+      TENANT: '/client'
     };
 
     this.router.navigate([routeMap[role] || '/auth']);
