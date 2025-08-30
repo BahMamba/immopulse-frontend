@@ -53,7 +53,7 @@ export class AuthService {
   }
 
   // Supprime le token et les infos user du stockage local
-  private clearStorage(): void {
+  clearStorage(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
   }
@@ -67,5 +67,10 @@ export class AuthService {
     };
 
     this.router.navigate([routeMap[role] || '/auth']);
+  }
+
+
+  updateUser(user: { fullname: string; email: string; role: string }): void {
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 }

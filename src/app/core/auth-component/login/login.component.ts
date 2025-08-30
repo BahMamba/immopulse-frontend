@@ -1,50 +1,59 @@
-import { Component } from '@angular/core';
+// src/app/core/auth-component/login/login.component.ts
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth/auth.service';
+import { TenantFormComponent } from 'app/core/components/tenant-form/tenant-form.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TenantFormComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  isSignupMode = false;
   errorMessage = '';
-  succesMessage = '';
+  successMessage = '';
+  propertyId: string | null = null;
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService,
-    private fb: FormBuilder
+    private router: Router,
+    private route: ActivatedRoute
   ) {
-    // Initialisation du formulaire avec validation
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  // Raccourci pour accéder facilement aux champs du formulaire
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.isSignupMode = params['signup'] === 'true';
+      this.propertyId = params['propertyId'];
+    });
+  }
+
   get f() {
     return this.loginForm.controls;
   }
 
-  // Méthode exécutée lors du submit
   onSubmit(): void {
     if (this.loginForm.invalid) {
       this.errorMessage = 'Validez tous les champs requis';
       return;
     }
 
-    const credentials = this.loginForm.value;
-
-    this.authService.login(credentials).subscribe({
+    this.authService.login(this.loginForm.value).subscribe({
       next: () => {
         this.errorMessage = '';
-        this.succesMessage = 'Bienvenue';
-        setTimeout(() => this.succesMessage = '', 4000);
+        this.successMessage = 'Bienvenue';
+        setTimeout(() => this.successMessage = '', 4000);
       },
       error: err => {
         this.errorMessage = err?.error?.message || 'Informations invalides';

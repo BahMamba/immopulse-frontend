@@ -2,7 +2,6 @@ export interface UserRequest {
   fullname: string;
   email: string;
   phoneNumber: string;
-  password?: string;
 }
 
 export interface UserResponse {

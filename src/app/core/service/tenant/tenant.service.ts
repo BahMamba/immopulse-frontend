@@ -14,8 +14,8 @@ export class TenantService {
     private notification: NotificationService
   ) {}
 
-  createTenant(request: UserRequest): Observable<TenantResponse> {
-    return this.http.post<TenantResponse>(this.API, request).pipe(
+  createTenant(request: UserRequest, password: string): Observable<TenantResponse> {
+    return this.http.post<TenantResponse>(this.API, request, { params: { password } }).pipe(
       catchError(err => this.handleError(err, 'Erreur lors de l\'inscription'))
     );
   }
