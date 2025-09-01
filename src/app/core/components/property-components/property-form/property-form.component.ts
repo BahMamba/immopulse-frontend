@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { PropertyService } from '../../service/property/property.service';
+import { PropertyService } from 'app/core/service/property/property.service';
 import { NotificationService } from 'app/core/service/alert-service/notification.service';
 
 @Component({

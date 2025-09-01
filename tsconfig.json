@@ -2,8 +2,8 @@
   "compileOnSave": true,
   "compilerOptions": {
     "target": "es2022",
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "es2020", // Changé de "Node16" à "es2020"
+    "moduleResolution": "bundler", // Changé de "node16" à "bundler"
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

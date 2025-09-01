@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { PaginatedProperties, PropertyListItem } from '../../property.models';
-import { PropertyService } from '../../service/property/property.service';
+import { PaginatedProperties, PropertyListItem } from '../../../property.models';
+import { PropertyService } from '../../../service/property/property.service';
 import { NotificationService } from 'app/core/service/alert-service/notification.service';
 
 @Component({

@@ -1,11 +1,10 @@
-// src/app/components/property-list/property-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { debounceTime, Subject } from 'rxjs';
-import { PaginatedProperties, PropertyListItem } from '../../property.models';
-import { PropertyService } from '../../service/property/property.service';
+import { PaginatedProperties, PropertyListItem } from '../../../property.models';
+import { PropertyService } from 'app/core/service/property/property.service';
 import { NotificationService } from 'app/core/service/alert-service/notification.service';
 
 @Component({

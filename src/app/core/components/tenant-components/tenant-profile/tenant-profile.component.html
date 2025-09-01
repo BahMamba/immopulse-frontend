@@ -1,0 +1,78 @@
+<div class="p-4 sm:p-6">
+  <div class="bg-white rounded-lg shadow-md p-4 sm:p-6 max-w-2xl mx-auto">
+    <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 text-center">
+      Profil Locataire
+    </h2>
+    <div *ngIf="!tenantProfile" class="text-center text-gray-500">
+      Chargement...
+    </div>
+    <div *ngIf="tenantProfile" class="space-y-4">
+      <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+        <h3 class="text-base sm:text-lg font-medium text-gray-700 mb-3">Informations</h3>
+        <div class="grid grid-cols-1 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Nom</label>
+            <p class="text-gray-900">{{ tenantProfile.userFullname || 'Non défini' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Email</label>
+            <p class="text-gray-900">{{ tenantProfile.userEmail }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Téléphone</label>
+            <p class="text-gray-900">{{ tenantProfile.userPhoneNumber || 'Non défini' }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+        <h3 class="text-base sm:text-lg font-medium text-gray-700 mb-3">Propriété</h3>
+        <div class="grid grid-cols-1 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Titre</label>
+            <p class="text-gray-900">{{ tenantProfile.propertyTitle || 'Aucune propriété' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Date de début</label>
+            <p class="text-gray-900">{{ tenantProfile.startDate || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Date de fin</label>
+            <p class="text-gray-900">{{ tenantProfile.endDate || 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Contrat</label>
+            <p class="text-gray-900">{{ tenantProfile.contractUrl ? (tenantProfile.contractUrl | slice:0:20) + '...' : 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Dépôt</label>
+            <p class="text-gray-900">{{ tenantProfile.depositAmount ? (tenantProfile.depositAmount + ' GNF') : 'N/A' }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Statut</label>
+            <p class="text-gray-900">{{ tenantProfile.status || 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 mt-4">
+        <button
+        [routerLink]="['/client/edit-tenant']"
+        class="bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700"
+      >
+        Modifier Profil
+      </button>
+        <button
+          (click)="deleteProfile()"
+          class="w-full sm:w-auto bg-red-600 text-white text-sm font-medium py-2 px-4 rounded hover:bg-red-700 transition-colors"
+        >
+          Supprimer
+        </button>
+        <button
+          (click)="logout()"
+          class="w-full sm:w-auto bg-gray-600 text-white text-sm font-medium py-2 px-4 rounded hover:bg-gray-700 transition-colors"
+        >
+          Déconnexion
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

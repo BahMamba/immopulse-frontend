@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+// src/app/core/components/tenant-components/tenant-form/tenant-form.component.ts
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TenantService } from 'app/core/service/tenant/tenant.service';
-import { NotificationService } from '../../../core/service/alert-service/notification.service';
-import { UserRequest, TenantResponse} from 'app/core/tenant.model';
-
+import { NotificationService } from '../../../service/alert-service/notification.service';
+import { UserRequest, TenantResponse } from 'app/core/tenant.model';
 
 @Component({
   selector: 'app-tenant-form',
@@ -15,7 +15,7 @@ import { UserRequest, TenantResponse} from 'app/core/tenant.model';
   styleUrls: ['./tenant-form.component.css']
 })
 export class TenantFormComponent implements OnInit {
-  @Input() isEditMode = false;
+  isEditMode = false;
   form: FormGroup;
   isSubmitting = false;
   propertyId: string | null = null;
@@ -35,14 +35,16 @@ export class TenantFormComponent implements OnInit {
     });
   }
 
-  // Getters pour simplifier accès aux contrôles dans le template
   get f() {
     return this.form.controls;
   }
 
   ngOnInit(): void {
+    this.route.url.subscribe(url => {
+      this.isEditMode = url.some(segment => segment.path === 'edit-tenant');
+    });
     this.route.queryParams.subscribe(params => {
-      this.propertyId = params['propertyId'];
+      this.propertyId = params['propertyId'] || null;
     });
 
     if (this.isEditMode) {
@@ -55,10 +57,10 @@ export class TenantFormComponent implements OnInit {
             phoneNumber: profile.userPhoneNumber
           });
         },
-        error: () => this.notification.showError('Erreur chargement profil')
+        error: () => this.notification.showError('Erreur lors du chargement du profil')
       });
     } else {
-      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(4)]);
       this.form.get('password')?.updateValueAndValidity();
     }
   }
@@ -82,11 +84,11 @@ export class TenantFormComponent implements OnInit {
         next: () => {
           this.isSubmitting = false;
           this.notification.showSuccess('Profil mis à jour');
-          this.router.navigate(['/client/profile']);
+          this.router.navigate(['/client/tenant-profile']);
         },
         error: () => {
           this.isSubmitting = false;
-          this.notification.showError('Erreur mise à jour');
+          this.notification.showError('Erreur lors de la mise à jour');
         }
       });
     } else {
@@ -99,14 +101,14 @@ export class TenantFormComponent implements OnInit {
         },
         error: () => {
           this.isSubmitting = false;
-          this.notification.showError('Erreur inscription');
+          this.notification.showError('Erreur lors de l\'inscription');
         }
       });
     }
   }
 
   cancel(): void {
-    this.router.navigate(this.isEditMode ? ['/client/profile'] : ['/auth'], {
+    this.router.navigate(this.isEditMode ? ['/client/tenant-profile'] : ['/auth'], {
       queryParams: { propertyId: this.propertyId }
     });
   }

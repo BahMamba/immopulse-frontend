@@ -1,3 +1,4 @@
+// src/app/core/service/tenant/tenant.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -15,7 +16,7 @@ export class TenantService {
   ) {}
 
   createTenant(request: UserRequest, password: string): Observable<TenantResponse> {
-    return this.http.post<TenantResponse>(this.API, request, { params: { password } }).pipe(
+    return this.http.post<TenantResponse>(`${this.API}?password=${encodeURIComponent(password)}`, request).pipe(
       catchError(err => this.handleError(err, 'Erreur lors de l\'inscription'))
     );
   }
@@ -33,7 +34,7 @@ export class TenantService {
   }
 
   getAllTenants(fullname?: string, page: number = 0, size: number = 10): Observable<Paginated<TenantResponse>> {
-    let params = new HttpParams().set('page', page).set('size', size).set('sort', 'id,asc');
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString()).set('sort', 'id,asc');
     if (fullname) params = params.set('fullname', fullname);
     return this.http.get<Paginated<TenantResponse>>(this.API, { params }).pipe(
       catchError(err => this.handleError(err, 'Erreur lors du chargement des locataires'))

@@ -1,10 +1,9 @@
-<!-- src/app/core/layouts-component/tenant-layout/tenant-layout.component.html -->
 <div class="flex h-screen bg-gray-100 relative">
   <!-- Sidebar desktop -->
   <aside class="w-64 bg-gradient-to-b from-gray-900 to-indigo-700 text-white p-4 space-y-3 shadow-lg hidden md:block">
     <div class="text-2xl font-bold mb-6">🏢 ImmoPulse</div>
     <nav class="space-y-2">
-      <a routerLink="/client/profile" class="block px-3 py-2 rounded hover:bg-indigo-600">👤 Profil</a>
+      <a routerLink="/client/tenant-profile" class="block px-3 py-2 rounded hover:bg-indigo-600">👤 Profil</a>
       <button (click)="logout()" class="block px-3 py-2 rounded hover:bg-indigo-600 w-full text-left">🚪 Déconnexion</button>
     </nav>
   </aside>
@@ -18,7 +17,7 @@
       <button class="text-white text-xl" (click)="sidebarOpen = false">✕</button>
     </div>
     <nav class="p-4 space-y-2">
-      <a routerLink="/client/profile" class="block px-3 py-2 rounded hover:bg-indigo-600">👤 Profil</a>
+      <a routerLink="/client/tenant-profile" class="block px-3 py-2 rounded hover:bg-indigo-600">👤 Profil</a>
       <button (click)="logout()" class="block px-3 py-2 rounded hover:bg-indigo-600 w-full text-left">🚪 Déconnexion</button>
     </nav>
   </div>

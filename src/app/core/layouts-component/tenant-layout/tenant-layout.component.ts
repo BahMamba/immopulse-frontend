@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth/auth.service';
 import { TenantService } from '../../service/tenant/tenant.service';
 import { TenantResponse } from '../../tenant.model';
@@ -8,7 +8,7 @@ import { TenantResponse } from '../../tenant.model';
 @Component({
   selector: 'app-tenant-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, RouterLink],
   templateUrl: './tenant-layout.component.html',
   styleUrls: ['./tenant-layout.component.css']
 })

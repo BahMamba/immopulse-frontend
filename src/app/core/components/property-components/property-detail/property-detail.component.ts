@@ -1,8 +1,8 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { PropertyService } from '../../service/property/property.service';
-import { PropertyDetail } from '../../property.models';
+import { PropertyService } from 'app/core/service/property/property.service';
+import { PropertyDetail } from 'app/core/property.models';
 import { register } from 'swiper/element/bundle';
 
 register();
